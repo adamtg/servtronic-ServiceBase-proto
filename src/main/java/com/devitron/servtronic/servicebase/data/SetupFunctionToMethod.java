@@ -1,0 +1,62 @@
+package com.devitron.servtronic.servicebase.data;
+
+import com.devitron.servtronic.messages.MessageReply;
+import com.devitron.servtronic.messages.MessageRequest;
+import com.devitron.servtronic.servicebase.annotations.ServiceMethod;
+import com.devitron.servtronic.servicebase.data.FunctionArguments;
+import com.devitron.servtronic.servicebase.data.FunctionToMethodMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.reflect.ClassPath;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Set;
+
+public class SetupFunctionToMethod {
+
+    public static void pullInAnnotations() throws IOException, NoSuchFieldException {
+
+        FunctionToMethodMap ftmm = FunctionToMethodMap.FunctionToMethodFactory();
+
+        ImmutableSet<ClassPath.ClassInfo> classSet = ClassPath.from(ClassLoader.getSystemClassLoader())
+                .getAllClasses();
+
+        for (ClassPath.ClassInfo classInfo : classSet) {
+            Class<?> c = classInfo.load();
+            for (Method method : c.getMethods()) {
+                ServiceMethod a = method.getAnnotation(ServiceMethod.class);
+                if (a != null) {
+                    String functionName = a.name();
+                    if (functionName.isEmpty()) {
+                        functionName = method.getName();
+                    }
+
+                    Class<?> messageReplyClass = method.getReturnType();
+                    Class<?> messageRequestClass = null;
+                    if (method.getParameterCount() == 1) {
+                        messageRequestClass = method.getParameterTypes()[0];
+                    }
+
+                    if ((messageRequestClass == null) || (!messageRequestClass.isAssignableFrom(MessageRequest.class))) {
+                        System.out.println("messageRequestClass is not a worthy class");
+                        // thrown an exception
+                    }
+
+                    if ((messageReplyClass == null) || (messageReplyClass.isAssignableFrom(MessageReply.class))) {
+                        System.out.println("messageReplyClass is not a worthy class");
+                        // thrown an exception
+                    }
+
+                    ftmm.add(functionName, new FunctionArguments(method, messageRequestClass, messageReplyClass));
+
+                }
+            }
+
+
+        }
+
+    }
+
+}
+
