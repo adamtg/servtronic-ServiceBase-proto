@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Listener {
 
-    @RabbitListener(queues = "#ConfigBase.getServiceName#")
+    @RabbitListener(queues = "#{ConfigBase.getServiceName}")
     public void getMessage(MessageRequest request) {
 
     }
