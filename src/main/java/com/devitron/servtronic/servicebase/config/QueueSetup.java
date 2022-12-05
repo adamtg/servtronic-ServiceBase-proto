@@ -17,19 +17,21 @@ public class QueueSetup {
         System.out.println("Running setupDirectQueue");
         System.out.println("=============================================================");
 
+        ConfigBase config = ConfigBase.configBaseFactory();
+
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setHost(ConfigBase.getHostname());
-        connectionFactory.setPort(ConfigBase.getPort());
+        connectionFactory.setHost(config.getHostname());
+        connectionFactory.setPort(config.getPort());
 
         RabbitAdmin admin = new RabbitAdmin(connectionFactory);
 
-        Queue q = new Queue(ConfigBase.getServiceName(), true);
+        Queue q = new Queue(config.getServiceName(), true);
         admin.declareQueue(q);
 
-        DirectExchange e = new DirectExchange(ConfigBase.getExchange(), true, false);
+        DirectExchange e = new DirectExchange(config.getExchange(), true, false);
         admin.declareExchange(e);
 
-        Binding b =  BindingBuilder.bind(q).to(e).with(ConfigBase.getRoutingKey());
+        Binding b =  BindingBuilder.bind(q).to(e).with(config.getRoutingKey());
         admin.declareBinding(b);
 
         return b;

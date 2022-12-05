@@ -19,21 +19,23 @@ public class RabbitMQConfig {
         System.out.println("Running connectionFactory");
         System.out.println("=============================================================");
 
+        ConfigBase config = ConfigBase.configBaseFactory();
+
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setAddresses(ConfigBase.getHostname());
-        connectionFactory.setPort(ConfigBase.getPort());
-        connectionFactory.setUsername(ConfigBase.getUsername());
-        connectionFactory.setPassword(ConfigBase.getPassword());
+        connectionFactory.setAddresses(config.getHostname());
+        connectionFactory.setPort(config.getPort());
+        connectionFactory.setUsername(config.getUsername());
+        connectionFactory.setPassword(config.getPassword());
 
         RabbitAdmin admin = new RabbitAdmin(connectionFactory);
 
-        Queue q = new Queue(ConfigBase.getServiceName(), true);
+        Queue q = new Queue(config.getServiceName(), true);
         admin.declareQueue(q);
 
-        DirectExchange e = new DirectExchange(ConfigBase.getExchange(), true, false);
+        DirectExchange e = new DirectExchange(config.getExchange(), true, false);
         admin.declareExchange(e);
 
-        Binding b =  BindingBuilder.bind(q).to(e).with(ConfigBase.getRoutingKey());
+        Binding b =  BindingBuilder.bind(q).to(e).with(config.getRoutingKey());
         admin.declareBinding(b);
 
 

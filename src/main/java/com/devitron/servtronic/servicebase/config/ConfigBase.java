@@ -1,79 +1,107 @@
 package com.devitron.servtronic.servicebase.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 @Configuration
 public class ConfigBase {
 
-    private static String hostname = "localhost";
-    private static Integer port = 5672;
-    private static String username = "guest";
-    private static String password = "guest";
-    private static String serviceName = "service";
+    private static ConfigBase configBase = null;
+    private String hostname = "localhost";
+    private Integer port = 5672;
+    private String username = "guest";
+    private String password = "guest";
+    private String serviceName = "service";
 
-    private static String exchange = "ServiceExchange";
+    private String exchange = "ServiceExchange";
 
-    private static String routingKey = "servicekey";
+    private String routingKey = "servicekey";
+
+    private ConfigBase() {}
+
+    public static ConfigBase configBaseFactory() {
+        if (configBase == null) {
+            configBase = new ConfigBase();
+        }
+
+        return configBase;
+    }
+
+
+    public ConfigBase load(String configFilename, Class<? extends ConfigBase> configClass) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        ConfigBase config = mapper.readValue(Paths.get(configFilename).toFile(), configClass);
+
+        return config;
+    }
+
+    public void setConfig(String configFilename, Class<? extends ConfigBase> configClass) throws IOException {
+            ConfigBase config = load(configFilename, configClass);
+            configBase = config;
+    }
 
 
     @Bean
     public ConfigBase getConfigBase() {
-        return new ConfigBase();
+        return configBase;
     }
-    public static String getHostname() {
+    public String getHostname() {
         return hostname;
     }
 
-    public static void setHostname(String hostname) {
-        ConfigBase.hostname = hostname;
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
     }
 
-    public static Integer getPort() {
+    public Integer getPort() {
         return port;
     }
 
-    public static void setPort(Integer port) {
-        ConfigBase.port = port;
+    public void setPort(Integer port) {
+        this.port = port;
     }
 
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public static void setUsername(String username) {
-        ConfigBase.username = username;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public static String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public static void setPassword(String password) {
-        ConfigBase.password = password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public static String getServiceName() {
+    public String getServiceName() {
         return serviceName;
     }
 
-    public static void setServiceName(String serviceName) {
-        ConfigBase.serviceName = serviceName;
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
     }
 
-    public static String getExchange() {
+    public String getExchange() {
         return exchange;
     }
 
-    public static void setExchange(String exchange) {
-        ConfigBase.exchange = exchange;
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
     }
 
-    public static String getRoutingKey() {
+    public String getRoutingKey() {
         return routingKey;
     }
 
-    public static void setRoutingKey(String routingKey) {
-        ConfigBase.routingKey = routingKey;
+    public void setRoutingKey(String routingKey) {
+        this.routingKey = routingKey;
     }
 }
