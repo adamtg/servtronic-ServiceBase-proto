@@ -18,11 +18,11 @@ public class FunctionArguments {
         this.replyClass = replyClass;
     }
 
-    public Method getRequest() {
+    public Method getMethod() {
         return method;
     }
 
-    public void setRequest(Method method) {
+    public void setMethod(Method method) {
         this.method = method;
     }
 

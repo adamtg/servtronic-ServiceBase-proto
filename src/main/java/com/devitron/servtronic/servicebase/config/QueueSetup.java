@@ -1,29 +1,25 @@
 package com.devitron.servtronic.servicebase.config;
 
+import com.devitron.servtronic.servicebase.config.ConfigBase;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig {
+public class QueueSetup {
 
-    @Bean
-    public ConnectionFactory connectionFactory() {
+    public Binding setupDirectQueue() {
         System.out.println("=============================================================");
-        System.out.println("Running connectionFactory");
+        System.out.println("Running setupDirectQueue");
         System.out.println("=============================================================");
 
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
-        connectionFactory.setAddresses(ConfigBase.getHostname());
+        connectionFactory.setHost(ConfigBase.getHostname());
         connectionFactory.setPort(ConfigBase.getPort());
-        connectionFactory.setUsername(ConfigBase.getUsername());
-        connectionFactory.setPassword(ConfigBase.getPassword());
 
         RabbitAdmin admin = new RabbitAdmin(connectionFactory);
 
@@ -36,7 +32,7 @@ public class RabbitMQConfig {
         Binding b =  BindingBuilder.bind(q).to(e).with(ConfigBase.getRoutingKey());
         admin.declareBinding(b);
 
-
-        return connectionFactory;
+        return b;
     }
+
 }
