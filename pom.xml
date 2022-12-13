@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.devitron.servtronic</groupId>
 	<artifactId>ServiceBase</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>servtronic-ServiceBase-proto</name>
 	<description>servtronic-ServiceBase-proto</description>
 	<properties>

@@ -29,7 +29,6 @@ public class Listener {
     }
 
     @RabbitListener(queues = "#{getConfigBase.getServiceName}")
-    //@RabbitListener(queues = "${servitron.service}")
     public void incoming(String inRequest) {
 
         MessageRequest  messageRequest = null;
