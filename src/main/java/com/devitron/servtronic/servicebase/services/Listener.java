@@ -19,15 +19,17 @@ import java.lang.reflect.Method;
 public class Listener {
 
     FunctionToMethodMap ftmm;
+
     ConfigBase configBase;
+
 
     public Listener(ConfigBase configBase) {
         ftmm = FunctionToMethodMap.FunctionToMethodFactory();
         this.configBase = configBase;
     }
 
-
-    @RabbitListener(queues = "#{configBase.getServiceName()}")
+    @RabbitListener(queues = "#{getConfigBase.getServiceName}")
+    //@RabbitListener(queues = "${servitron.service}")
     public void incoming(String inRequest) {
 
         MessageRequest  messageRequest = null;

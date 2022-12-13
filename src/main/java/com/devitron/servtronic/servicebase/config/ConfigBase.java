@@ -7,10 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-@Configuration
 public class ConfigBase {
 
-    private static ConfigBase configBase = null;
     private String hostname = "localhost";
     private Integer port = 5672;
     private String username = "guest";
@@ -21,34 +19,17 @@ public class ConfigBase {
 
     private String routingKey = "servicekey";
 
-    private ConfigBase() {}
-
-    public static ConfigBase configBaseFactory() {
-        if (configBase == null) {
-            configBase = new ConfigBase();
-        }
-
-        return configBase;
-    }
+    public ConfigBase() {}
 
 
-    public ConfigBase load(String configFilename, Class<? extends ConfigBase> configClass) throws IOException {
+    public static ConfigBase load(String configFilename, Class<? extends ConfigBase> configClass) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         ConfigBase config = mapper.readValue(Paths.get(configFilename).toFile(), configClass);
 
         return config;
     }
 
-    public void setConfig(String configFilename, Class<? extends ConfigBase> configClass) throws IOException {
-            ConfigBase config = load(configFilename, configClass);
-            configBase = config;
-    }
 
-
-    @Bean
-    public ConfigBase getConfigBase() {
-        return configBase;
-    }
     public String getHostname() {
         return hostname;
     }

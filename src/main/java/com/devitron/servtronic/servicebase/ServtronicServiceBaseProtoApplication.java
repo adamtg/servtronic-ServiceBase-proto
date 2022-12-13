@@ -9,6 +9,11 @@ public class ServtronicServiceBaseProtoApplication {
 
 
 	public static void main(String[] args) {
+
+		//AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+		//ctx.register(Config.class);
+		//ctx.refresh();
+
 		SpringApplication.run(ServtronicServiceBaseProtoApplication.class, args);
 	}
 

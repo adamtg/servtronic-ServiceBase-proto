@@ -13,13 +13,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
+    private ConfigBase config;
+
     @Bean
-    public ConnectionFactory connectionFactory() {
+    public ConnectionFactory connectionFactory(ConfigBase config) {
         System.out.println("=============================================================");
         System.out.println("Running connectionFactory");
         System.out.println("=============================================================");
 
-        ConfigBase config = ConfigBase.configBaseFactory();
 
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setAddresses(config.getHostname());
