@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.devitron.servtronic</groupId>
-	<artifactId>ServiceBase</artifactId>
+	<artifactId>servicebase</artifactId>
 	<version>0.0.1</version>
 	<name>servtronic-ServiceBase-proto</name>
 	<description>servtronic-ServiceBase-proto</description>
@@ -59,14 +59,5 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
