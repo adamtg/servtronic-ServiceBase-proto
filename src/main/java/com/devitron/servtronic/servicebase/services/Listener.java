@@ -28,7 +28,7 @@ public class Listener {
         this.configBase = configBase;
     }
 
-    @RabbitListener(queues = "#{getConfigBase.getServiceName}")
+    @RabbitListener(queues = "#{getConfig.getServiceName}")
     public void incoming(String inRequest) {
 
         MessageRequest  messageRequest = null;

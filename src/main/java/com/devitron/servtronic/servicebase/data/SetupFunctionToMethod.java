@@ -23,39 +23,40 @@ public class SetupFunctionToMethod {
                 .getAllClasses();
 
         for (ClassPath.ClassInfo classInfo : classSet) {
+            try {
             Class<?> c = classInfo.load();
-            for (Method method : c.getMethods()) {
-                ServiceMethod a = method.getAnnotation(ServiceMethod.class);
-                if (a != null) {
-                    String functionName = a.name();
-                    if (functionName.isEmpty()) {
-                        functionName = method.getName();
+
+                for (Method method : c.getMethods()) {
+                    ServiceMethod a = method.getAnnotation(ServiceMethod.class);
+                    if (a != null) {
+                        String functionName = a.name();
+                        if (functionName.isEmpty()) {
+                            functionName = method.getName();
+                        }
+
+                        Class<?> messageReplyClass = method.getReturnType();
+                        Class<?> messageRequestClass = null;
+                        if (method.getParameterCount() == 1) {
+                            messageRequestClass = method.getParameterTypes()[0];
+                        }
+
+                        if ((messageRequestClass == null) || (!MessageRequest.class.isAssignableFrom(messageRequestClass))) {
+                            System.out.println("001 messageRequestClass is not a worthy class");
+                            // thrown an exception
+                        }
+
+                        if ((messageReplyClass == null) || (!MessageReply.class.isAssignableFrom(messageReplyClass))) {
+                            System.out.println("messageReplyClass is not a worthy class");
+                            // thrown an exception
+                        }
+
+                        ftmm.add(functionName, new FunctionArguments(method, messageRequestClass, messageReplyClass));
                     }
-
-                    Class<?> messageReplyClass = method.getReturnType();
-                    Class<?> messageRequestClass = null;
-                    if (method.getParameterCount() == 1) {
-                        messageRequestClass = method.getParameterTypes()[0];
-                    }
-
-                    if ((messageRequestClass == null) || (!messageRequestClass.isAssignableFrom(MessageRequest.class))) {
-                        System.out.println("messageRequestClass is not a worthy class");
-                        // thrown an exception
-                    }
-
-                    if ((messageReplyClass == null) || (messageReplyClass.isAssignableFrom(MessageReply.class))) {
-                        System.out.println("messageReplyClass is not a worthy class");
-                        // thrown an exception
-                    }
-
-                    ftmm.add(functionName, new FunctionArguments(method, messageRequestClass, messageReplyClass));
-
                 }
+            } catch (NoClassDefFoundError e) {
+                System.out.println("Could not parse class");
             }
-
-
         }
-
     }
 
 }
