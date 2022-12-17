@@ -7,8 +7,10 @@ import com.devitron.servtronic.servicebase.config.ConfigBase;
 import com.devitron.servtronic.servicebase.data.FunctionArguments;
 import com.devitron.servtronic.servicebase.data.FunctionToMethodMap;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,14 +20,17 @@ import java.lang.reflect.Method;
 @Service
 public class Listener {
 
-    FunctionToMethodMap ftmm;
+    private FunctionToMethodMap ftmm;
 
-    ConfigBase configBase;
+    private ConfigBase configBase;
+
+    private Publisher publisher;
 
 
-    public Listener(ConfigBase configBase) {
+    public Listener(ConfigBase configBase, Publisher publisher) {
         ftmm = FunctionToMethodMap.FunctionToMethodFactory();
         this.configBase = configBase;
+        this.publisher = publisher;
     }
 
     @RabbitListener(queues = "#{getConfig.getServiceName}")
@@ -39,16 +44,18 @@ public class Listener {
             e.printStackTrace();
         }
 
+        System.out.println("===============================================>");
+        System.out.println(inRequest);
+        System.out.println("===============================================>");
+
+
         HeaderRequest headerRequest = messageRequest.getHeader();
         String function = headerRequest.getFunction();
+        System.out.println("==============================> " + function);
         FunctionArguments functionArguments = ftmm.get(function);
         MessageRequest message = null;
         Class<?> requestClass =  functionArguments.getRequestClass();
-        try {
-            message = convertToMessageRequest(inRequest, requestClass);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        message = convertToMessageRequest(inRequest, requestClass);
 
         Class<?> replyClass = functionArguments.getReplyClass();
         Method method = functionArguments.getMethod();
@@ -61,19 +68,35 @@ public class Listener {
             throw new RuntimeException(e);
         }
 
+        if (reply != null) {
+            try {
+                publisher.send(reply);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private MessageRequest convertToBaseMessageRequest(String inRequest) throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);;
         MessageRequest mr = objectMapper.readValue(inRequest.getBytes(), MessageRequest.class);
         return mr;
     }
 
-    private MessageRequest convertToMessageRequest(String inRequest, Class<?> messageClass) throws JsonProcessingException {
+    private MessageRequest convertToMessageRequest(String inRequest, Class<?> messageClass)  {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        MessageRequest message = (MessageRequest)objectMapper.readValue(inRequest, messageClass);
+        MessageRequest message = null;
+        try {
+            message = (MessageRequest)objectMapper.readValue(inRequest, messageClass);
+        } catch (JsonProcessingException e) {
+            System.out.println("-----------------------------------------------------------------");
+            e.getMessage();
+            e.printStackTrace();
+            System.out.println("-----------------------------------------------------------------");
+
+        }
         return message;
     }
 

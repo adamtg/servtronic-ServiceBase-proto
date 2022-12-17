@@ -30,9 +30,11 @@ public class SetupFunctionToMethod {
                     ServiceMethod a = method.getAnnotation(ServiceMethod.class);
                     if (a != null) {
                         String functionName = a.name();
+                        System.out.println("-=-==-=-=-> fn 01: " + functionName);
                         if (functionName.isEmpty()) {
                             functionName = method.getName();
                         }
+                        System.out.println("-=-==-=-=-> fn 02: " + functionName);
 
                         Class<?> messageReplyClass = method.getReturnType();
                         Class<?> messageRequestClass = null;
@@ -50,11 +52,15 @@ public class SetupFunctionToMethod {
                             // thrown an exception
                         }
 
+                        System.out.println("==============> " + functionName);
+                        System.out.println("----> method: " + method.getName());
+                        System.out.println("----> request: " + messageRequestClass.getName());
+                        System.out.println("----> reply: " + messageReplyClass.getName());
+
                         ftmm.add(functionName, new FunctionArguments(method, messageRequestClass, messageReplyClass));
                     }
                 }
             } catch (NoClassDefFoundError e) {
-                System.out.println("Could not parse class");
             }
         }
     }

@@ -1,5 +1,11 @@
 package com.devitron.servtronic.servicebase.config;
 
+import com.devitron.servtronic.messages.ServiceRegistration;
+import com.devitron.servtronic.servicebase.services.Publisher;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -9,6 +15,9 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 @Configuration
 public class RabbitMQConfig {
@@ -39,6 +48,42 @@ public class RabbitMQConfig {
         Binding b =  BindingBuilder.bind(q).to(e).with(config.getRoutingKey());
         admin.declareBinding(b);
 
+        System.out.println("=============================================================");
+        System.out.println("Registering");
+        System.out.println("=============================================================");
+
+        ServiceRegistration.Request request = new ServiceRegistration.Request(
+                config.getServiceName(), config.getRoutingKey(), config.getExchange());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String stringMessage = null;
+        try {
+            stringMessage = objectMapper.writeValueAsString(request);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
+
+        try {
+            com.rabbitmq.client.ConnectionFactory factory = new com.rabbitmq.client.ConnectionFactory();
+            factory.setHost(config.getHostname());
+            factory.setPort(config.getPort());
+            factory.setUsername(config.getUsername());
+            factory.setPassword(config.getPassword());
+            Connection connection  = factory.newConnection();
+            Channel channel = connection.createChannel();
+
+
+
+            channel.basicPublish(config.getRegistrationExchange(), config.getRegistrationRoutingKey(),
+                    null, stringMessage.getBytes());
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        } catch (TimeoutException ex) {
+            ex.printStackTrace();
+            throw new RuntimeException(ex);
+        }
 
         return connectionFactory;
     }

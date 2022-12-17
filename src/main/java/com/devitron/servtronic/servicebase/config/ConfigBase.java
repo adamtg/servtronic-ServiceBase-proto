@@ -19,6 +19,13 @@ public class ConfigBase {
 
     private String routingKey = "servicekey";
 
+    private String registrationExchange = "MessageController";
+    private String registrationRoutingKey = "registration";
+
+    private String mcIncomingExchange = "MessageController";
+    private String mcIncomingRoutingKey = "incoming";
+
+
     public ConfigBase() {}
 
 
@@ -84,5 +91,37 @@ public class ConfigBase {
 
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
+    }
+
+    public String getRegistrationExchange() {
+        return registrationExchange;
+    }
+
+    public void setRegistrationExchange(String registrationExchange) {
+        this.registrationExchange = registrationExchange;
+    }
+
+    public String getRegistrationRoutingKey() {
+        return registrationRoutingKey;
+    }
+
+    public void setRegistrationRoutingKey(String registrationRoutingKey) {
+        this.registrationRoutingKey = registrationRoutingKey;
+    }
+
+    public String getMcIncomingExchange() {
+        return mcIncomingExchange;
+    }
+
+    public void setMcIncomingExchange(String mcIncomingExchange) {
+        this.mcIncomingExchange = mcIncomingExchange;
+    }
+
+    public String getMcIncomingRoutingKey() {
+        return mcIncomingRoutingKey;
+    }
+
+    public void setMcIncomingRoutingKey(String mcIncomingRoutingKey) {
+        this.mcIncomingRoutingKey = mcIncomingRoutingKey;
     }
 }
