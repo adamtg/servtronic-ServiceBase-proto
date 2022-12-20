@@ -42,11 +42,12 @@ public class SetupFunctionToMethod {
 
                         if ((messageRequestClass == null) || (!MessageRequest.class.isAssignableFrom(messageRequestClass))) {
                             System.out.println("001 messageRequestClass is not a worthy class");
-                            // thrown an exception
+                            System.exit(0);
                         }
 
                         if ((messageReplyClass != null) && (!MessageReply.class.isAssignableFrom(messageReplyClass))) {
                             System.out.println("messageReplyClass is not a worthy class");
+                            System.exit(0);
                             // thrown an exception
                         }
 
