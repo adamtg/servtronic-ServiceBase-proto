@@ -30,11 +30,9 @@ public class SetupFunctionToMethod {
                     ServiceMethod a = method.getAnnotation(ServiceMethod.class);
                     if (a != null) {
                         String functionName = a.name();
-                        System.out.println("-=-==-=-=-> fn 01: " + functionName);
                         if (functionName.isEmpty()) {
                             functionName = method.getName();
                         }
-                        System.out.println("-=-==-=-=-> fn 02: " + functionName);
 
                         Class<?> messageReplyClass = method.getReturnType();
                         Class<?> messageRequestClass = null;
@@ -47,7 +45,7 @@ public class SetupFunctionToMethod {
                             // thrown an exception
                         }
 
-                        if ((messageReplyClass == null) || (!MessageReply.class.isAssignableFrom(messageReplyClass))) {
+                        if ((messageReplyClass != null) && (!MessageReply.class.isAssignableFrom(messageReplyClass))) {
                             System.out.println("messageReplyClass is not a worthy class");
                             // thrown an exception
                         }
@@ -55,7 +53,11 @@ public class SetupFunctionToMethod {
                         System.out.println("==============> " + functionName);
                         System.out.println("----> method: " + method.getName());
                         System.out.println("----> request: " + messageRequestClass.getName());
-                        System.out.println("----> reply: " + messageReplyClass.getName());
+                        if (messageReplyClass != null) {
+                            System.out.println("----> reply: " + messageReplyClass.getName());
+                        } else {
+                            System.out.println("----> reply: null");
+                        }
 
                         ftmm.add(functionName, new FunctionArguments(method, messageRequestClass, messageReplyClass));
                     }
