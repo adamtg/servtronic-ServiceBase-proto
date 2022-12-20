@@ -23,6 +23,9 @@ public class SetupFunctionToMethod {
                 .getAllClasses();
 
         for (ClassPath.ClassInfo classInfo : classSet) {
+            if (classInfo.getName().contains("springframework")) {
+                continue;
+            }
             try {
             Class<?> c = classInfo.load();
 
